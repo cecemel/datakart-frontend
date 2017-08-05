@@ -14,7 +14,7 @@ export default Ember.Route.extend({
   },
   model(){
     return this.store.findRecord('tracking-session',
-                  "59823EFEF1ABCD000700000A",
+                  "5985B791FD1A75000700003D",
                   {include: "anchors-configuration,anchors-configuration.deployed-anchors" +
                   ",anchors-configuration.deployed-anchors.point-coordinate"});
                 },

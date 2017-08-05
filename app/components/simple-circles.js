@@ -51,6 +51,43 @@ export default Component.extend({
     let width = get(this, 'width');
     let height = get(this, 'height');
 
+
+    //filter excessive speed
+    // data = data.reduce((acc, val, i) => {
+    //   if(i === 0){
+    //     acc.push(val);
+    //     return acc;
+    //   }
+    //   let prev = acc[acc.length - 1];
+    //   let deltaX = prev[0] - val[0];
+    //   let deltaY = prev[1] - val[1];
+    //   let dist = Math.sqrt(deltaX*deltaX + deltaY*deltaY);
+    //   if(dist > 5000){
+    //     return acc;
+    //   }
+    //   acc.push(val);
+    //   return acc;
+    // }, []);
+
+    // moving average
+    let movAvg = [];
+    for(var i = 0; i < data.length - 5; ++i){
+      let _window = data.slice(i, i+5);
+
+      let xAvg = _window.reduce((acc, val) => {
+        return acc + val[0];
+      }, _window[0][0])/5;
+
+      let yAvg = _window.reduce((acc, val) => {
+        return acc + val[1];
+      }, _window[0][1])/5;
+
+      movAvg.push([xAvg, yAvg]);
+
+    }
+    data = movAvg;
+
+
     //add origin
     let domainArray = data.slice();
     domainArray.push([0,0]);
@@ -58,12 +95,14 @@ export default Component.extend({
 
     // X scale to scale position on x axis
     let xScale = scaleLinear()
-      .domain(extent(domainArray.map((d) => d[0])))
+      .domain([-5000, 10000])
+      //.domain(extent(domainArray.map((d) => d[0])))
       .range([0, width]);
 
     // Y scale to scale radius of circles proportional to size of plot
     let yScale = scaleLinear()
-      .domain(extent(domainArray.map((d) => d[1]).sort(ascending)))
+      .domain([-5000, 10000])
+      //.domain(extent(domainArray.map((d) => d[1]).sort(ascending)))
       .range([0, height]);
 
 
