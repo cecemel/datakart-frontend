@@ -69,6 +69,21 @@ export default Component.extend({
     //   return acc;
     // }, []);
 
+    data = data.map( e =>{
+      return [e[0], -1 * e[1]];
+    });
+
+    //filter withing bounding box
+    // data = data.filter( e => {
+    //   if( e[0] <= 13291 && e[0] >= 0 && e[1] <= 13902 && e[1] >=0) {
+    //     return e;
+    //     }
+    // });
+
+    console.log(data.length);
+    // console.log(data[3][0])
+    console.log(data);
+
     // moving average
     let movAvg = [];
     for(var i = 0; i < data.length - 5; ++i){
@@ -95,15 +110,63 @@ export default Component.extend({
 
     // X scale to scale position on x axis
     let xScale = scaleLinear()
-      .domain([-5000, 10000])
+      .domain([-50000, 50000])
+      //.domain([-50000, 20000])
       //.domain(extent(domainArray.map((d) => d[0])))
       .range([0, width]);
 
     // Y scale to scale radius of circles proportional to size of plot
     let yScale = scaleLinear()
-      .domain([-5000, 10000])
+      .domain([-50000, 50000])
       //.domain(extent(domainArray.map((d) => d[1]).sort(ascending)))
       .range([0, height]);
+
+
+
+      //draw every x sec a timestamp
+      for(var l=0; l < data.length; ++l){
+        // if(! (l % 15 === 0)){
+        //   continue;
+        // }
+        plot.append('circle')
+          .attr('fill', 'red')
+          .attr('opacity', 0.5)
+          .attr('r', () => 5)
+          .attr('cy', () => yScale(data[l][1]))
+          .attr('cx', () => xScale(data[l][0]));
+
+        // plot.append("text")
+        // .attr("x", () => xScale(a.get("pointCoordinate.xValue") - 5))
+        // .attr("y", () => yScale(-1* (a.get("pointCoordinate.yValue") - 5)))
+        // .text( () => { return "( " + a.get("pointCoordinate.xValue") +
+        //                               ", " + a.get("pointCoordinate.yValue") +" )"; })
+        // .attr("font-family", "sans-serif")
+        // .attr("font-size", "20px")
+        // .attr("fill", "red");
+
+
+      }
+
+
+
+      //anchors
+      this.get("data.anchorsConfiguration.deployedAnchors").forEach(a =>{
+        plot.append('circle')
+          .attr('fill', 'steelblue')
+          .attr('opacity', 0.5)
+          .attr('r', () => 20)
+          .attr('cy', () => yScale(-1 * a.get("pointCoordinate.yValue")))
+          .attr('cx', () => xScale(a.get("pointCoordinate.xValue")));
+
+        plot.append("text")
+        .attr("x", () => xScale(a.get("pointCoordinate.xValue") - 5))
+        .attr("y", () => yScale(-1* (a.get("pointCoordinate.yValue") - 5)))
+        .text( () => { return "( " + a.get("pointCoordinate.xValue") +
+                                      ", " + a.get("pointCoordinate.yValue") +" )"; })
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "20px")
+        .attr("fill", "red");
+      });
 
 
     //line drawing
@@ -119,25 +182,6 @@ export default Component.extend({
     .attr("class", "line")
     .style("stroke", "black" )
     .attr('fill', 'none');
-
-    //anchors
-    this.get("data.anchorsConfiguration.deployedAnchors").forEach(a =>{
-      plot.append('circle')
-        .attr('fill', 'steelblue')
-        .attr('opacity', 0.5)
-        .attr('r', () => 20)
-        .attr('cy', () => yScale(a.get("pointCoordinate.yValue")))
-        .attr('cx', () => xScale(a.get("pointCoordinate.xValue")));
-
-      plot.append("text")
-      .attr("x", () => xScale(a.get("pointCoordinate.xValue") - 5))
-      .attr("y", () => yScale(a.get("pointCoordinate.yValue") - 5))
-      .text( () => { return "( " + a.get("pointCoordinate.xValue") +
-                                    ", " + a.get("pointCoordinate.yValue") +" )"; })
-      .attr("font-family", "sans-serif")
-      .attr("font-size", "20px")
-      .attr("fill", "red");
-    });
 
   },
 });
