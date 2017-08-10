@@ -6,13 +6,17 @@ export default Ember.Route.extend({
   _getRawData(sessionId){
     return this.get('ajax')
            .request("/raw-tracking-sessions/"+ sessionId +"/data-points"
-           + "?start=2017-08-06T13:35:00" +
+          //  + "?start=2017-08-06T13:37:02" +
+          //   "&end=2017-08-06T13:37:08")
+           + "?start=2017-08-06T13:36:59" +
             "&end=2017-08-06T13:37:16")
+          // + "?start=2017-08-06T13:37:13" +
+          //  "&end=2017-08-06T13:37:16")
 
-          //)
+        //)
            .then(data => {
              return data.map((d) => {
-               return [d["x-value"], d["y-value"], d["timestamp"]];
+               return [parseInt(d["x-value"]), parseInt(d["y-value"]), d["timestamp"]];
              });
            });
   },
